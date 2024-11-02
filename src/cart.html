@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./output.css">
+    <title>Document</title>
+</head>
+
+<body class="bg-[#fffffe]">
+    <header class="py-[26px]">
+        <div class="container">
+            <div class="flex items-center justify-between">
+                <div class="flex gap-[12px] items-center">
+                    <div class="flex gap-[5px] items-center">
+                        <select>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">UZB</option>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">ENG</option>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">RUS</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-[5px] items-center">
+                        <select>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">RUS</option>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">ENG</option>
+                            <option class="font-medium text-[16px] text-[#000]" value="#">UZB</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-[26px]">
+                    <div class="flex items-center gap-[6px]">
+                        <img src="./img/img1.svg" alt="img">
+                        <a class="font-normal text-[20px] text-[#262626]" href="./index.html">My profile</a>
+                    </div>
+                    <img class="row" src="./img/img2.svg" alt="img">
+                    <div class="">
+                        <p class="font-normal text-[20px] text-[#262626]">Items</p>
+                    </div>
+                    <div class="flex items-center gap-[6px]">
+                        <p class="font-normal text-[20px] text-[#262626]">$0.00</p>
+                        <img src="./img/search.svg" alt="img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="pb-[30px]">
+        <div class="container">
+            <div class="flex items-center justify-between">
+                <div>
+                    <img src="./img/logo.svg" alt="logo">
+                </div>
+                <div class="flex items-center gap-[97px]">
+                    <a class="font-medium text-[24px] text-[#40bfff]" href="#">HOME</a>
+                    <a class="font-medium text-[24px] text-[#262626] hover:text-[#40bfff]" href="#">BAGS</a>
+                    <a class="font-medium text-[24px] text-[#262626] hover:text-[#40bfff]" href="#">SNEAKERS</a>
+                    <a class="font-medium text-[24px] text-[#262626] hover:text-[#40bfff]" href="#">BELT</a>
+                    <a class="font-medium text-[24px] text-[#262626] hover:text-[#40bfff]" href="#">CONTACT</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt-[40px] pb-[40px] flex">
+        <div class="container">
+            <div class="flex justify-between">
+                <div>
+                    <h1 class="">PRODUCT</h1>
+                </div>
+                <div class="flex items-center gap-10">
+                    <div id="total-price" class="font-semibold text-[16px]">Total Price: 0$</div>
+                    <div id="total-quantity" class="font-semibold text-[16px]">Total Items: 0</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-4 gap-[30px] pt-[40px]" id="cart"></div>
+        </div>
+    </section>
+
+    <script>
+        const cart_E = document.getElementById('cart');
+        const totalPriceElement = document.getElementById('total-price');
+        const totalQuantityElement = document.getElementById('total-quantity');
+        const carts = JSON.parse(localStorage.getItem('akira')) || [];
+
+        if (carts.length === 0) {
+            cart_E.innerText = '';
+        } else {
+            let totalQuantity = 0;
+            let totalPrice = 0;
+
+            carts.forEach(item => {
+                const itemEleAll = document.createElement('div');
+                itemEleAll.className = 'cart-item';
+                itemEleAll.innerHTML = `
+                    <div class="w-[300px] h-[400px] border border-2 bg-[#fff] rounded-[10px] p-[15px]">
+                        <img class="w-[200px] h-[190px] ml-auto mr-auto mb-[10px]" src="${item.image}" alt="">
+                        <h1 class="font-bold text-[#223263] w-[250px] mt-[10px] mb-[10px] ">${item.title}</h1>
+                        <div class="flex items-center justify-between mb-[10px] ml-[30px] mr-[30px]">
+                            <p class="font-bold text-[#223263] text-[18px] line-through">${item.price}$</p>
+                            <p class="text-[#6d9f64] font-bold">${Math.round(item.price - (item.price / 100 * 24))}$</p>
+                            <p class="text-[red]">24%</p>
+                            </div>
+                            <button class="bg-[#e3e4e5] py-[7px] px-[10px] rounded-[10px] boder border-1" data-id="${item.id}">Delete</button>
+                    </div>
+                `;
+                cart_E.appendChild(itemEleAll);
+                totalQuantity += Number(item.quantity);
+                totalPrice += Number(Math.round(item.price - (item.price / 100 * 24)) * item.quantity);
+            });
+
+            totalQuantityElement.innerText = `Total Items: ${totalQuantity}`;
+            totalPriceElement.innerText = `Total Price: ${totalPrice.toFixed(2)}$`;
+        }
+
+        cart_E.addEventListener('click', (e) => {
+            const button = e.target.closest('[data-id]');
+            if (button) {
+                const id = button.dataset.id;
+                deleteCart(id);
+            }
+        });
+
+        const deleteCart = (id) => {
+            const updatedCarts = carts.filter(item => item.id !== Number(id));
+            localStorage.setItem('akira', JSON.stringify(updatedCarts));
+            location.reload();
+        };
+    </script>
+    <footer class="pt-[150px] pb-[55px] bg-[#BCDDFE]">
+        <div class="container">
+            <ul class="flex justify-between mb-[280px]">
+                <li class="w-[225px]">
+                    <img src="./img/img_7.png" alt="img">
+                    <p class="mt-[16px] font-medium text-[14px] text-[#22262a] text-start">Lorem Ipsum is simply dummy
+                        text of the
+                        printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
+                        ever.Since the
+                        1500s, when an unknown printer.</p>
+                </li>
+                <li class="w-[225px]">
+                    <h3 class="font-bold text-[18px] text-[#22262a]">Follow Us</h3>
+                    <p class="font medium text-[14px] text-[#22262a] mt-[20px]">Since the 1500s, when an unknown printer
+                        took a
+                        galley of type and scrambled.</p>
+                    <div class="flex gap-[40px] mt-[23px]">
+                        <img src="./img/img_8.svg" alt="img">
+                        <img src="./img/img_9.svg" alt="img">
+                    </div>
+                </li>
+                <li class="w-[225px]">
+                    <h3 class="font-bold text-[18px] text-[#22262a]">Contact Us</h3>
+                    <p class="font medium text-[14px] text-[#22262a] mt-[20px]">E-Comm , 4578 <br> Marmora Road, <br>
+                        Glasgow D04
+                        89GR</p>
+                </li>
+            </ul>
+            <div>
+                <img class="w-[1205px] h-[2px]" src="./img/img_10.svg" alt="img">
+                <div>
+                    <div class="mt-[34px] flex gap-[648px] items-center">
+                        <a class="font-medium text-[#c1c8ce] text-[16px] " href="#">© 2018 Ecommerce theme by
+                            www.bisenbaev.com</a>
+                        <img src="./img/img_11.svg" alt="img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
